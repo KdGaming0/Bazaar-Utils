@@ -98,10 +98,10 @@ public class ScreenInfo implements BUListener {
     }
 
     @RunOnInit
-    public static void registerScreenHistoryClearOnDisconnect() {
-        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
-            // Clear screen history when disconnecting to prevent memory leak
-            // This is especially important when switching between Hypixel lobbies
+    public static void registerScreenHistoryClearOnJoin() {
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            // Clear screen history when joining a world/server to prevent memory leak
+            // This fires when switching between Hypixel lobbies (proxy doesn't disconnect)
             previousScreenInfos.clear();
         });
     }

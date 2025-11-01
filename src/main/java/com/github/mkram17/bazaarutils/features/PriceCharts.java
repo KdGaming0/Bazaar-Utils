@@ -84,10 +84,10 @@ public class PriceCharts implements ItemTooltipCallback, BUListener {
     }
 
     @RunOnInit
-    public static void registerCacheClearOnDisconnect() {
-        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
-            // Clear cache when disconnecting from a world/server to prevent memory leak
-            // This is especially important when switching between Hypixel lobbies
+    public static void registerCacheClearOnJoin() {
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            // Clear cache when joining a world/server to prevent memory leak
+            // This fires when switching between Hypixel lobbies (proxy doesn't disconnect)
             SHOW_CACHE.clear();
         });
     }
