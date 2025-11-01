@@ -2,8 +2,10 @@ package com.github.mkram17.bazaarutils.utils;
 
 import com.github.mkram17.bazaarutils.events.handlers.BUListener;
 import com.github.mkram17.bazaarutils.events.ScreenChangeEvent;
+import com.github.mkram17.bazaarutils.misc.autoregistration.RunOnInit;
 import lombok.Getter;
 import meteordevelopment.orbit.EventHandler;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.screen.ScreenHandler;
@@ -93,6 +95,15 @@ public class ScreenInfo implements BUListener {
 
     public static boolean previousScreenHas(Predicate<ScreenInfo> filter){
         return previousScreenInfos.stream().anyMatch(filter);
+    }
+
+    @RunOnInit
+    public static void registerScreenHistoryClearOnDisconnect() {
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+            // Clear screen history when disconnecting to prevent memory leak
+            // This is especially important when switching between Hypixel lobbies
+            previousScreenInfos.clear();
+        });
     }
 
     @Override
