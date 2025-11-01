@@ -5,6 +5,7 @@ import com.github.mkram17.bazaarutils.config.BUConfigGui;
 import com.github.mkram17.bazaarutils.data.BazaarData;
 import com.github.mkram17.bazaarutils.events.SlotClickEvent;
 import com.github.mkram17.bazaarutils.events.handlers.BUListener;
+import com.github.mkram17.bazaarutils.misc.autoregistration.RunOnInit;
 import com.github.mkram17.bazaarutils.misc.orderinfo.OrderInfoContainer;
 import com.github.mkram17.bazaarutils.utils.ScreenInfo;
 import com.github.mkram17.bazaarutils.utils.Util;
@@ -14,6 +15,7 @@ import lombok.Getter;
 import lombok.Setter;
 import meteordevelopment.orbit.EventHandler;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -79,6 +81,15 @@ public class PriceCharts implements ItemTooltipCallback, BUListener {
             MinecraftClient.getInstance().setScreen(null);
         }, link, true));
         e.cancel();
+    }
+
+    @RunOnInit
+    public static void registerCacheClearOnDisconnect() {
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+            // Clear cache when disconnecting from a world/server to prevent memory leak
+            // This is especially important when switching between Hypixel lobbies
+            SHOW_CACHE.clear();
+        });
     }
 
     @Override
